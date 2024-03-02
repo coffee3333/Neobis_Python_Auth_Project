@@ -14,4 +14,7 @@ COPY . /app/
 
 EXPOSE 8000
 
+
+CMD ["python", "/app/source/manage.py", "makemigrations"]
+CMD ["python", "/app/source/manage.py", "migrate"]
 CMD ["python", "/app/source/manage.py", "runserver", "0.0.0.0:3000"]
