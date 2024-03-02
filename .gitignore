@@ -115,3 +115,4 @@ oauth_codes.json
 http-client.private.env.json
 docs/source/README.md
 assets/.yarn
+.DS_Store
