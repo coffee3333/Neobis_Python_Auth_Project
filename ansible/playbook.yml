@@ -1,0 +1,50 @@
+---
+- name: Pull and run Docker image
+  hosts: linode_server
+  become: true
+
+  vars:
+    image_name: coffee3333/react-web-app
+    image_tag: tagname
+    container_name: web-react-app
+
+  tasks:
+    - name: Install python3-docker
+      become: true
+      apt:
+        update_cache: yes
+        state: latest
+        name: python3-docker
+
+    - name: Get docker Info
+      docker_host_info:
+        containers: yes
+      register: docker_info
+
+    - name: Stop old docker container 
+      docker_container:
+        name: "{{ container_name }}"
+        state: absent
+        
+    - name: Delete all not running container
+      docker_prune:
+        images: yes
+        containers: yes
+
+    - name: Delete old docker image
+      community.general.docker_image:
+        name: "{{ image_name }}:{{ image_tag }}"
+        state: absent
+
+    - name: Pull Docker image
+      community.general.docker_image:
+        name: "{{ image_name }}:{{ image_tag }}"
+        source: pull
+
+    - name: Run Docker container
+      community.general.docker_container:
+        name: "{{ container_name }}"
+        image: "{{ image_name }}:{{ image_tag }}"
+        state: started
+        ports:
+          - "3000:3000"
